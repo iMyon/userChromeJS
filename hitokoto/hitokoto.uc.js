@@ -14,10 +14,14 @@
 location == "chrome://browser/content/browser.xul" && (function() {
 
 	var autotip = 0; //0为地址栏文字显示，1为自动弹出
+
+	//如果是地址栏文字，文字长度（个数，包括标点符号），留空或0则全部显示
+	SayingLong = 10;
+
 	var autotiptime = 5000; //设置自动弹出时，多少秒后关闭弹窗
 
 	var is_autoRefresh = true;		//是否设置自动刷新内容
-	var refreshTime = 45 * 1000;	//同一页面自动刷新语录时间，需要上一选项为true才生效
+	var refreshTime = 45 * 1000;	//同一页面自动刷新语录时间，需要上一选项为true才生效，默认45秒
 
 	var Local_Delay = 2500; //毫秒， 延迟时间，时间内未取得hitokoto在线数据，则使用本地数据库
 	var Local_Path = 'lib\\hitokoto.json'; //数据库文件位置
@@ -205,7 +209,13 @@ location == "chrome://browser/content/browser.xul" && (function() {
 			}			
 		},
 		updateTooltipText: function(val) {
-			if (autotip == 0) this.hitokotos.label = val;
+			if (SayingLong && SayingLong !== 0 && val.length > SayingLong) {
+				urlval = val.substr(0, SayingLong) + '.....';
+			} else {
+				urlval = val;
+			}
+
+			if (autotip == 0) this.hitokotos.label = urlval;
 			else {
 				var popup = $("hitokototip");
 				if (this.timer) clearTimeout(this.timer);

@@ -15,16 +15,20 @@
 location == "chrome://browser/content/browser.xul" && (function() {
 
 	//VeryCD(名言名句)或hitokoto。
-	sayingType = 'veryCD',
+	sayingType = 'hitokoto',
 
 	//0为地址栏文字显示，1为自动弹出
 	autotip = 0,
 
 	//如果是地址栏文字，文字长度（个数，包括标点符号），留空或0则全部显示
-	SayingLong = 0,
+	SayingLong = 100,    //默认100
 
 	//autotip=1时有效，设置自动弹出时，多少秒后关闭弹窗
 	autotiptime = 5000,
+
+  //同一页面自动刷新设置
+  is_autoRefresh = true,    //是否设置自动刷新内容
+  refreshTime = 35 * 1000,  //同一页面自动刷新语录时间，需要上一选项为true才生效，默认35秒
 
 	//是否混合随机显示
 	random = true,
@@ -459,6 +463,16 @@ location == "chrome://browser/content/browser.xul" && (function() {
 	};
 
 	window.saying.init();
+
+  //自动刷新
+  if(is_autoRefresh === true){
+    (function autoRefresh(time){
+      setTimeout(function(){
+          saying.onLocationChange(true);
+          autoRefresh(time);
+        },time);
+    })(refreshTime);
+  }
 
 	function $(id) document.getElementById(id);
 
